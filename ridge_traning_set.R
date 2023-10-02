@@ -1,3 +1,6 @@
+# Read and clean the data
+compustat_data <- read.csv("compustat2.csv")
+
 # Load necessary libraries
 library(splines)
 library(mgcv)
@@ -7,11 +10,10 @@ library(glmnet)  # For Ridge Regression
 # ----------------------------------------------------------------
 # SECTION 1: DATA TREATMENT
 
-# Read and clean the data
-compustat_data <- read.csv("compustat2.csv")
+
 
 # Variable selection rationale: (Provide your rationale here)
-selected_vars <- c("uniamiq", "cogsq", "revtq")
+selected_vars <- c("uniamiq", "cogsq", "revtq", "cibegniq", "opepsq")
 
 # Create a new data frame with only the selected columns
 new_compustat_data <- compustat_data[, selected_vars]
@@ -60,7 +62,9 @@ ggplot(new_compustat_data, aes(x=revtq, y=uniamiq)) +
 # --------------------------------------------------------
 # SECTION 4: ADDITIVE MODEL
 # Fit the additive model using training data
-fit_additive_train <- gam(uniamiq ~ s(cogsq) + s(revtq), data=train_data)
+fit_additive_train <- gam(uniamiq ~ s(cogsq) + s(revtq) + s(cibegniq) +s(opepsq), data=train_data)
+
+summary(fit_additive_train)
 
 # Use the additive model to predict profitability on test data
 predicted_profit_test <- predict(fit_additive_train, newdata=test_data)
@@ -72,9 +76,9 @@ predicted_profit_train <- predict(fit_additive_train, newdata=train_data)
 # SECTION 6: RIDGE REGRSSION
 
 # Prepare the data for Ridge Regression
-X_train <- as.matrix(train_data[, c("cogsq", "revtq")])
+X_train <- as.matrix(train_data[, c("cogsq", "revtq", "cibegniq", "opepsq")])
 y_train <- train_data$uniamiq
-X_test <- as.matrix(test_data[, c("cogsq", "revtq")])
+X_test <- as.matrix(test_data[, c("cogsq", "revtq", "cibegniq", "opepsq")])
 y_test <- test_data$uniamiq
 
 # Fit the Ridge Regression model
@@ -139,7 +143,13 @@ print(rmse_results)
 # Evaluate for simple firm using Ridge Regression
 
 # Create a new matrix for prediction with sample values
-new_sample_matrix <- as.matrix(data.frame(cogsq = c(400), revtq = c(1200)))
+new_sample_matrix <- as.matrix(data.frame(
+  cogsq = c(400),      # Cost of Goods Sold
+  revtq = c(1200),     # Revenue
+  opepsq = c(0.2),      # Earnings Per Share from Operations
+  cibegniq = c(100)    # Beginning Net Income
+))
+
 
 # Use the Ridge Regression model to predict profitability for new data
 predicted_profit_sample_ridge <- predict(fit_ridge_best, s = best_lambda, newx = new_sample_matrix)

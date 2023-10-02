@@ -57,3 +57,15 @@ predicted_profit_train <- predict(fit_additive_train, newdata=train_data)
 actual_profit_train <- train_data$uniamiq
 rmse_train <- sqrt(mean((predicted_profit_train - actual_profit_train)^2))
 print(paste("Root Mean Square Error (RMSE) on Training Data:", rmse_train))
+
+# Evaluate for simple firm
+# Create a new data frame for prediction with sample values
+new_sample_data <- data.frame(cogsq = c(1200), revtq = c(3000))
+
+# Use the additive model to predict profitability for new data
+predicted_profit_sample <- predict(fit_additive_train, newdata = new_sample_data)
+
+# Display the predicted profitability
+print("Predicted Profitability for New Sample Data:")
+print(predicted_profit_sample)
+

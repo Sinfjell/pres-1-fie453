@@ -2,7 +2,7 @@
 library(splines)
 library(mgcv)
 library(ggplot2)
-library(lmtest)
+
 
 # Read and clean the data
 compustat_data <- read.csv("compustat2.csv")
@@ -57,17 +57,4 @@ predicted_profit <- predict(fit_additive, newdata=new_compustat_data)
 new_compustat_data$predicted_profit <- predicted_profit
 
 
-
-# ----------------------
-# Function to compare t-values
-compare_t_values <- function(model) {
-  # Standard OLS t-values
-  standard_t_values <- summary(model)$coefficients[, "t value"]
-  # Robust t-values
-  robust_t_values <- coeftest(model, vcov = vcovHC(model, type = "HC3"))[, "t value"]
-  # Combine and compare
-  comparison <- data.frame(Standard = standard_t_values, Robust = robust_t_values)
-  print(comparison)
-}
-compare_t_values(fit_spline_cogsq)
 
