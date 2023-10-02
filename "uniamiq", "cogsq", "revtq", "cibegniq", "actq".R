@@ -10,8 +10,6 @@ library(glmnet)  # For Ridge Regression
 # ----------------------------------------------------------------
 # SECTION 1: DATA TREATMENT
 
-
-
 # Variable selection rationale: (Provide your rationale here)
 selected_vars <- c("uniamiq", "cogsq", "revtq", "cibegniq", "actq")
 
@@ -144,8 +142,8 @@ print(rmse_results)
 
 # Create a new matrix for prediction with sample values
 
-new_sample_matrix <- as.matrix(data.frame(cogsq = c(400), revtq = c(1200), 
-                                          cibegniq = c(30), actq = c(29)))
+new_sample_matrix <- as.matrix(data.frame(cogsq = c(400), revtq = c(800), 
+                                          cibegniq = c(30), actq = c(1000)))
 
 
 
